@@ -8,9 +8,45 @@
 
 static void SPI_enable(spi_channel_t){}
 /*It activate the clock gating*/
-static void SPI_clk(spi_channel_t){}
+static void SPI_clk(spi_channel_t){
+	switch(spi_channel_t)
+		{
+			case SPI_0:
+				SPI0->MCR=SPI0_CLOCK_GATING;
+				break;
+			case SPI_1:
+				SPI1->MCR=SPI1_CLOCK_GATING;
+				break;
+			case SPI_2:
+				SPI2->MCR=SPI2_CLOCK_GATING;
+				break;
+			default:
+
+				break;
+		}// end switch
+}
 /*It configure the SPI as a master or slave depending on the value of masterOrslave*/
-static void SPI_set_master(spi_channel_t channel, spi_master_t masterOrSlave){}
+static void SPI_set_master(spi_channel_t channel, spi_master_t masterOrSlave){
+	switch(spi_channel_t)
+			{
+				case SPI_0:
+					if(masterOrSlave){SPI0->MCR|=0x80000000;}
+					else{SPI0->MCR|=0x00000000;}
+					break;
+				case SPI_1:
+					if(masterOrSlave){SPI1->MCR|=0x80000000;}
+					else{SPI1->MCR|=0x00000000;}
+					break;
+				case SPI_2:
+					if(masterOrSlave){SPI2->MCR|=0x80000000;}
+					else{SPI2->MCR|=0x00000000;}
+					break;
+				default:
+
+					break;
+			}// end switch
+
+}
 /*It activate the TX and RX FIFOs of the SPI depending on the value of enableOrdisable*/
 static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable){}
 /*It selects the clock polarity depending on the value of cpol*/
