@@ -83,28 +83,28 @@ static void SPI_set_master(spi_channel_t channel, spi_master_t masterOrSlave)
 		case (SPI_0):
 				if (masterOrSlave)
 				{
-					SPI0->MCR |= SPI_MASTER_SELECT;
+					SPI0->MCR |= SPI_MCR_MSTR_MASK;
 				}
 				else
-					SPI0->MCR &= SPI_SLAVE_SELECT;
+					SPI0->MCR &= ~(SPI_MCR_MSTR_MASK);
 				break;
 
 		case (SPI_1):
 				if (masterOrSlave)
 				{
-					SPI1->MCR |= SPI_MASTER_SELECT;
+					SPI1->MCR |= SPI_MCR_MSTR_MASK;
 				}
 				else
-					SPI1->MCR &= SPI_SLAVE_SELECT;
+					SPI1->MCR &= ~(SPI_MCR_MSTR_MASK);
 				break;
 
 		case (SPI_2):
 				if (masterOrSlave)
 				{
-					SPI2->MCR |= SPI_MASTER_SELECT;
+					SPI2->MCR |= SPI_MCR_MSTR_MASK;
 				}
 				else
-					SPI2->MCR &= SPI_SLAVE_SELECT;
+					SPI2->MCR &= ~(SPI_MCR_MSTR_MASK);
 				break;
 
 		default:
@@ -152,17 +152,91 @@ static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable){
 /*It selects the clock polarity depending on the value of cpol*/
 static void SPI_clock_polarity(spi_channel_t channel, spi_polarity_t cpol)
 {
-	//CTARn
+	switch (channel)
+	{
+		case (SPI_0):
+				if (cpol)
+				{
+					SPI0->CTAR[SPI_CTAR_0] |= SPI_CTAR_CPOL_MASK;
+				}
+				else
+					SPI0->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_CPOL_MASK);
+				break;
+		case (SPI_1):
+				if (cpol)
+				{
+					SPI1->CTAR[SPI_CTAR_0] |= SPI_CTAR_CPOL_MASK;
+				}
+				else
+					SPI1->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_CPOL_MASK);
+				break;
+		case (SPI_2):
+				if (cpol)
+				{
+					SPI2->CTAR[SPI_CTAR_0] |= SPI_CTAR_CPOL_MASK;
+				}
+				else
+					SPI2->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_CPOL_MASK);
+				break;
+		default:
+			break;
+	}
 }
+
 /*It selects the frame size depending on the value of frameSize and the macros that are defined above*/
 static void SPI_frame_size(spi_channel_t channel, uint32_t frameSize)
 {
-	//CTARn
+	frameSize <<= SPI_CTAR_FMSZ_SHIFT;
+	switch (channel)
+	{
+		case (SPI_0):
+			SPI0->CTAR[SPI_CTAR_0] |= frameSize;
+			break;
+		case (SPI_1):
+			SPI1->CTAR[SPI_CTAR_0] |= frameSize;
+			break;
+		case (SPI_2):
+			SPI2->CTAR[SPI_CTAR_0] |= frameSize;
+			break;
+		default:
+			break;
+	}
 }
 /*It selects the clock phase depending on the value of cpha*/
 static void SPI_clock_phase(spi_channel_t channel, spi_phase_t cpha)
 {
-	//CTARn
+	switch (channel)
+	{
+		case (SPI_0):
+			if (cpha)
+			{
+				SPI0->CTAR[SPI_CTAR_0] |= SPI_CTAR_CPHA_MASK;
+			}
+			else
+				SPI0->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_CPHA_MASK);
+			break;
+
+		case (SPI_1):
+			if (cpha)
+			{
+				SPI1->CTAR[SPI_CTAR_0] |= SPI_CTAR_CPHA_MASK;
+			}
+			else
+				SPI1->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_CPHA_MASK);
+			break;
+
+		case (SPI_2):
+			if (cpha)
+			{
+				SPI2->CTAR[SPI_CTAR_0] |= SPI_CTAR_CPHA_MASK;
+			}
+			else
+				SPI2->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_CPHA_MASK);
+			break;
+
+		default:
+			break;
+ 	}
 }
 /*It selects the baud rate depending on the value of baudRate and the macros that are defined above*/
 static void SPI_baud_rate(spi_channel_t channel, uint32_t baudRate);
@@ -205,22 +279,28 @@ static void SPI_msb_first(spi_channel_t channel, spi_lsb_or_msb_t msb){
 void SPI_start_tranference(spi_channel_t channel)
 {
 	switch(channel)
-	{
-		case (SPI_0):
-			SPI0->SR &= SPI_START_SR;
-			SPI0->MCR &= SPI_START_MCR;
-			break;
-		case (SPI_1):
-			SPI1->SR &= SPI_START_SR;
-			SPI1->MCR &= SPI_START_MCR;
-			break;
-		case (SPI_2):
-			SPI2->SR &= SPI_START_SR;
-			SPI2->MCR &= SPI_START_MCR;
-			break;
-		default:
-			break;
-	}
+		{
+			case (SPI_0):
+				SPI0->SR &= ~(SPI_SR_EOQF_MASK);
+				SPI0->MCR &= ~(SPI_MCR_FRZ_MASK);
+				SPI0->MCR &= ~(SPI_MCR_HALT_MASK);
+				break;
+
+			case (SPI_1):
+				SPI1->SR &= ~(SPI_SR_EOQF_MASK);
+				SPI1->MCR &= ~(SPI_MCR_FRZ_MASK);
+				SPI1->MCR &= ~(SPI_MCR_HALT_MASK);
+				break;
+
+			case (SPI_2):
+				SPI2->SR &= ~(SPI_SR_EOQF_MASK);
+				SPI2->MCR &= ~(SPI_MCR_FRZ_MASK);
+				SPI2->MCR &= ~(SPI_MCR_HALT_MASK);
+				break;
+
+			default:
+				break;
+		}
 }
 
 
@@ -228,22 +308,25 @@ void SPI_start_tranference(spi_channel_t channel)
 void SPI_stop_tranference(spi_channel_t channel)
 {
 	switch(channel)
-		{
-			case (SPI_0):
-				SPI0->SR &= SPI_STOP_SR;
-				SPI0->MCR &= SPI_STOP_MCR;
-				break;
-			case (SPI_1):
-				SPI1->SR &= SPI_STOP_SR;
-				SPI1->MCR &= SPI_STOP_MCR;
-				break;
-			case (SPI_2):
-				SPI2->SR &= SPI_STOP_SR;
-				SPI2->MCR &= SPI_STOP_MCR;
-				break;
-			default:
-				break;
-		}
+			{
+				case (SPI_0):
+					SPI0->SR |= SPI_SR_EOQF_MASK;
+					SPI0->MCR |= SPI_MCR_FRZ_MASK;
+					SPI0->MCR |= SPI_MCR_HALT_MASK;
+					break;
+				case (SPI_1):
+					SPI1->SR |= SPI_SR_EOQF_MASK;
+					SPI1->MCR |= SPI_MCR_FRZ_MASK;
+					SPI1->MCR |= SPI_MCR_HALT_MASK;
+					break;
+				case (SPI_2):
+					SPI2->SR |= SPI_SR_EOQF_MASK;
+					SPI2->MCR |= SPI_MCR_FRZ_MASK;
+					SPI2->MCR |= SPI_MCR_HALT_MASK;
+					break;
+				default:
+					break;
+			}
 }
 /*It transmits the information contained in data*/
 void SPI_send_one_byte(uint8_t Data);

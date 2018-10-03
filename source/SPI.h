@@ -61,12 +61,7 @@
 #define SPI_FIFO_ENABLE 0x00
 #define SPI_FIFO_DIS 0xF0
 
-/** Constant that used to start or stop SPI transference */
-#define SPI_STOP_SR 0x10000000
-#define SPI_START_SR 0xEFFFFFFF
-#define SPI_STOP_MCR 0x08000001
-#define SPI_START_MCR 0xF7FFFFFE
-
+#define SPI_CTAR_0 0
 
 
 
