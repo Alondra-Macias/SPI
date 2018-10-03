@@ -58,6 +58,9 @@
 #define SPI_MASTER_SELECT 0x80000000
 #define SPI_SLAVE_SELECT 0x7FFFFFFF
 
+#define SPI_FIFO_ENABLE 0x00
+#define SPI_FIFO_DIS 0xF0
+
 /** Constant that used to start or stop SPI transference */
 #define SPI_STOP_SR 0x10000000
 #define SPI_START_SR 0xEFFFFFFF

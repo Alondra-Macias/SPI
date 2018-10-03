@@ -61,13 +61,13 @@ static void SPI_enable(spi_channel_t spiName){
 	switch(spiName)
 	{
 		case (SPI_0):
-				SPI0->MCR=0;
+		SPI0->MCR|=0;
 			break;
 		case (SPI_1):
-		SPI1->MCR=0;
+		SPI1->MCR|=0;
 			break;
 		case (SPI_2):
-		SPI2->MCR=0;
+		SPI2->MCR|=0;
 			break;
 		default:
 			break;
@@ -114,7 +114,41 @@ static void SPI_set_master(spi_channel_t channel, spi_master_t masterOrSlave)
 
 
 /*It activate the TX and RX FIFOs of the SPI depending on the value of enableOrdisable*/
-static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable);
+static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable){
+	switch(channel)
+		{
+			case (SPI_0):
+					if (enableOrDisable)
+					{
+						SPI0->MCR |= SPI_FIFO_ENABLE;
+					}
+					else
+						SPI0->MCR &= SPI_FIFO_DIS;
+					break;
+
+			case (SPI_1):
+					if (enableOrDisable)
+					{
+						SPI1->MCR |= SPI_FIFO_ENABLE;
+					}
+					else
+						SPI1->MCR &= SPI_FIFO_DIS;
+					break;
+
+			case (SPI_2):
+					if (enableOrDisable)
+					{
+						SPI2->MCR |= SPI_FIFO_ENABLE;
+					}
+					else
+						SPI2->MCR &= SPI_FIFO_DIS;
+					break;
+
+			default:
+				break;
+		}
+}
+
 /*It selects the clock polarity depending on the value of cpol*/
 static void SPI_clock_polarity(spi_channel_t channel, spi_polarity_t cpol)
 {
