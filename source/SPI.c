@@ -41,7 +41,7 @@ static void SPI_clk(spi_channel_t spiName)
 	switch(spiName)
 	{
 		case (SPI_0):
-			SIM->SCGC6 |= SPI1_CLOCK_GATING;
+			SIM->SCGC6 |= SPI0_CLOCK_GATING;
 			break;
 		case (SPI_1):
 			SIM->SCGC6 |= SPI1_CLOCK_GATING;
@@ -136,7 +136,7 @@ static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable){
 					break;
 
 			case (SPI_2):
-					if (masterOrSlave)
+					if (enableOrDisable)
 					{
 						SPI2->MCR |= SPI_FIFO_ENABLE;
 					}
@@ -167,7 +167,40 @@ static void SPI_clock_phase(spi_channel_t channel, spi_phase_t cpha)
 /*It selects the baud rate depending on the value of baudRate and the macros that are defined above*/
 static void SPI_baud_rate(spi_channel_t channel, uint32_t baudRate);
 /*It selects if MSB or LSM bits is first transmitted*/
-static void SPI_msb_first(spi_channel_t channel, spi_lsb_or_msb_t msb);
+static void SPI_msb_first(spi_channel_t channel, spi_lsb_or_msb_t msb){
+	switch(channel)
+			{
+				case (SPI_0):
+						if (msb)
+						{
+							SPI0->MCR = SPI_CTAR_LSBFE_MASK;
+						}
+						else
+							SPI0->MCR = ~SPI_CTAR_LSBFE_MASK;
+						break;
+
+				case (SPI_1):
+						if (msb)
+						{
+							SPI1->MCR = SPI_CTAR_LSBFE_MASK;
+						}
+						else
+							SPI1->MCR =~SPI_CTAR_LSBFE_MASK;
+						break;
+
+				case (SPI_2):
+						if (msb)
+						{
+							SPI2->MCR = SPI_CTAR_LSBFE_MASK;
+						}
+						else
+							SPI2->MCR = ~SPI_CTAR_LSBFE_MASK;
+						break;
+
+				default:
+					break;
+			}
+}
 /*It stars the SPI transmission by modifying the value of HALT bit*/
 void SPI_start_tranference(spi_channel_t channel)
 {
