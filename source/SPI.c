@@ -57,7 +57,23 @@ static void SPI_clk(spi_channel_t spiName)
 
 
 /*it enable the clock module of the SPI by modifying the MDIS bits*/
-static void SPI_enable(spi_channel_t);
+static void SPI_enable(spi_channel_t spiName){
+	switch(spiName)
+	{
+		case (SPI_0):
+				SPI0->MCR=0;
+			break;
+		case (SPI_1):
+		SPI1->MCR=0;
+			break;
+		case (SPI_2):
+		SPI2->MCR=0;
+			break;
+		default:
+			break;
+	}
+
+}
 
 /*It configure the SPI as a master or slave depending on the value of masterOrslave*/
 static void SPI_set_master(spi_channel_t channel, spi_master_t masterOrSlave)
