@@ -58,6 +58,17 @@
 #define SPI_MASTER_SELECT 0x80000000
 #define SPI_SLAVE_SELECT 0x7FFFFFFF
 
+/** Constant that used to start or stop SPI transference */
+#define SPI_STOP_SR 0x10000000
+#define SPI_START_SR 0xEFFFFFFF
+#define SPI_STOP_MCR 0x08000001
+#define SPI_START_MCR 0xF7FFFFFE
+
+
+
+
+
+
 /*Type for FIFO configuration*/
 typedef enum {SPI_DISABLE_FIFO, SPI_ENABLE_FIFO} spi_enable_fifo_t;
 /*Type for polarity configuration*/

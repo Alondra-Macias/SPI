@@ -100,19 +100,68 @@ static void SPI_set_master(spi_channel_t channel, spi_master_t masterOrSlave)
 /*It activate the TX and RX FIFOs of the SPI depending on the value of enableOrdisable*/
 static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable);
 /*It selects the clock polarity depending on the value of cpol*/
-static void SPI_clock_polarity(spi_channel_t channel, spi_polarity_t cpol);
+static void SPI_clock_polarity(spi_channel_t channel, spi_polarity_t cpol)
+{
+	//CTARn
+}
 /*It selects the frame size depending on the value of frameSize and the macros that are defined above*/
-static void SPI_frame_size(spi_channel_t channel, uint32_t frameSize);
+static void SPI_frame_size(spi_channel_t channel, uint32_t frameSize)
+{
+	//CTARn
+}
 /*It selects the clock phase depending on the value of cpha*/
-static void SPI_clock_phase(spi_channel_t channel, spi_phase_t cpha);
+static void SPI_clock_phase(spi_channel_t channel, spi_phase_t cpha)
+{
+	//CTARn
+}
 /*It selects the baud rate depending on the value of baudRate and the macros that are defined above*/
 static void SPI_baud_rate(spi_channel_t channel, uint32_t baudRate);
 /*It selects if MSB or LSM bits is first transmitted*/
 static void SPI_msb_first(spi_channel_t channel, spi_lsb_or_msb_t msb);
 /*It stars the SPI transmission by modifying the value of HALT bit*/
-void SPI_start_tranference(spi_channel_t channel);
+void SPI_start_tranference(spi_channel_t channel)
+{
+	switch(channel)
+	{
+		case (SPI_0):
+			SPI0->SR &= SPI_START_SR;
+			SPI0->MCR &= SPI_START_MCR;
+			break;
+		case (SPI_1):
+			SPI1->SR &= SPI_START_SR;
+			SPI1->MCR &= SPI_START_MCR;
+			break;
+		case (SPI_2):
+			SPI2->SR &= SPI_START_SR;
+			SPI2->MCR &= SPI_START_MCR;
+			break;
+		default:
+			break;
+	}
+}
+
+
 /*It stops the SPI transmission by modifying the value of HALT bit*/
-void SPI_stop_tranference(spi_channel_t channel);
+void SPI_stop_tranference(spi_channel_t channel)
+{
+	switch(channel)
+		{
+			case (SPI_0):
+				SPI0->SR &= SPI_STOP_SR;
+				SPI0->MCR &= SPI_STOP_MCR;
+				break;
+			case (SPI_1):
+				SPI1->SR &= SPI_STOP_SR;
+				SPI1->MCR &= SPI_STOP_MCR;
+				break;
+			case (SPI_2):
+				SPI2->SR &= SPI_STOP_SR;
+				SPI2->MCR &= SPI_STOP_MCR;
+				break;
+			default:
+				break;
+		}
+}
 /*It transmits the information contained in data*/
 void SPI_send_one_byte(uint8_t Data);
 /*It configures the SPI for transmission, this function as arguments receives a pointer to a constant structure where are all
