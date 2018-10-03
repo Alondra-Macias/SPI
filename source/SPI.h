@@ -55,6 +55,8 @@
 #define SPI_PCSIS_4 (0x1000u)
 #define SPI_PCSIS_5 (0x2000u)
 
+#define SPI_MASTER_SELECT 0x80000000
+#define SPI_SLAVE_SELECT 0x7FFFFFFF
 
 /*Type for FIFO configuration*/
 typedef enum {SPI_DISABLE_FIFO, SPI_ENABLE_FIFO} spi_enable_fifo_t;
