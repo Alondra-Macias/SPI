@@ -239,7 +239,24 @@ static void SPI_clock_phase(spi_channel_t channel, spi_phase_t cpha)
  	}
 }
 /*It selects the baud rate depending on the value of baudRate and the macros that are defined above*/
-static void SPI_baud_rate(spi_channel_t channel, uint32_t baudRate);
+static void SPI_baud_rate(spi_channel_t channel, uint32_t baudRate){
+baudRate<<=SPI_CTAR_PBR_SHIFT;
+
+		switch (channel)
+		{
+			case (SPI_0):
+				SPI0->CTAR[SPI_CTAR_0]=baudRate;
+				break;
+			case (SPI_1):
+				SPI0->CTAR[SPI_CTAR_0]=baudRate;
+				break;
+			case (SPI_2):
+				SPI0->CTAR[SPI_CTAR_0]=baudRate;
+				break;
+			default:
+				break;
+		}
+}
 /*It selects if MSB or LSM bits is first transmitted*/
 static void SPI_msb_first(spi_channel_t channel, spi_lsb_or_msb_t msb){
 	switch(channel)
@@ -329,7 +346,11 @@ void SPI_stop_tranference(spi_channel_t channel)
 			}
 }
 /*It transmits the information contained in data*/
-void SPI_send_one_byte(uint8_t Data);
+void SPI_send_one_byte(uint8_t Data){
+	SPI0->PUSHR = Data;
+		while(0 == (SPI0->SR & SPI_SR_TCF_MASK));
+		SPI0->SR |= SPI_SR_TCF_MASK;
+}
 /*It configures the SPI for transmission, this function as arguments receives a pointer to a constant structure where are all
  * the configuration parameters*/
 void SPI_init(const spi_config_t*);
