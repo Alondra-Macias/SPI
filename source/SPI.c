@@ -61,13 +61,13 @@ static void SPI_enable(spi_channel_t spiName){
 	switch(spiName)
 	{
 		case (SPI_0):
-		SPI0->MCR|=0;
+		SPI0->MCR|=SPI_MCR_MDIS_MASK;
 			break;
 		case (SPI_1):
-		SPI1->MCR|=0;
+		SPI1->MCR|=SPI_MCR_MDIS_MASK;
 			break;
 		case (SPI_2):
-		SPI2->MCR|=0;
+		SPI2->MCR|=SPI_MCR_MDIS_MASK;
 			break;
 		default:
 			break;
@@ -136,7 +136,7 @@ static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable){
 					break;
 
 			case (SPI_2):
-					if (enableOrDisable)
+					if (masterOrSlave)
 					{
 						SPI2->MCR |= SPI_FIFO_ENABLE;
 					}
