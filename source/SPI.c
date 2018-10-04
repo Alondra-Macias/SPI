@@ -61,13 +61,13 @@ static void SPI_enable(spi_channel_t spiName){
 	switch(spiName)
 	{
 		case (SPI_0):
-		SPI0->MCR|=SPI_MCR_MDIS_MASK;
+		SPI0->MCR&= ~SPI_MCR_MDIS_MASK;
 			break;
 		case (SPI_1):
-		SPI1->MCR|=SPI_MCR_MDIS_MASK;
+		SPI1->MCR&= ~SPI_MCR_MDIS_MASK;
 			break;
 		case (SPI_2):
-		SPI2->MCR|=SPI_MCR_MDIS_MASK;
+		SPI2->MCR&= ~SPI_MCR_MDIS_MASK;
 			break;
 		default:
 			break;
@@ -120,28 +120,28 @@ static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable){
 			case (SPI_0):
 					if (enableOrDisable)
 					{
-						SPI0->MCR |= SPI_FIFO_ENABLE;
+						SPI0->MCR &= ~(SPI_FIFOS_DIS);
 					}
 					else
-						SPI0->MCR &= SPI_FIFO_DIS;
+						SPI0->MCR |= SPI_FIFOS_DIS;
 					break;
 
 			case (SPI_1):
 					if (enableOrDisable)
 					{
-						SPI1->MCR |= SPI_FIFO_ENABLE;
+						SPI1->MCR &= ~(SPI_FIFOS_DIS);
 					}
 					else
-						SPI1->MCR &= SPI_FIFO_DIS;
+						SPI1->MCR |= SPI_FIFOS_DIS;
 					break;
 
 			case (SPI_2):
 					if (enableOrDisable)
 					{
-						SPI2->MCR |= SPI_FIFO_ENABLE;
+						SPI2->MCR &= ~(SPI_FIFOS_DIS);
 					}
 					else
-						SPI2->MCR &= SPI_FIFO_DIS;
+						SPI2->MCR |= SPI_FIFOS_DIS;
 					break;
 
 			default:
@@ -240,18 +240,18 @@ static void SPI_clock_phase(spi_channel_t channel, spi_phase_t cpha)
 }
 /*It selects the baud rate depending on the value of baudRate and the macros that are defined above*/
 static void SPI_baud_rate(spi_channel_t channel, uint32_t baudRate){
-baudRate<<=SPI_CTAR_PBR_SHIFT;
+
 
 		switch (channel)
 		{
 			case (SPI_0):
-				SPI0->CTAR[SPI_CTAR_0]=baudRate;
+				SPI0->CTAR[SPI_CTAR_0] |= baudRate;
 				break;
 			case (SPI_1):
-				SPI0->CTAR[SPI_CTAR_0]=baudRate;
+				SPI0->CTAR[SPI_CTAR_0] |= baudRate;
 				break;
 			case (SPI_2):
-				SPI0->CTAR[SPI_CTAR_0]=baudRate;
+				SPI0->CTAR[SPI_CTAR_0] |= baudRate;
 				break;
 			default:
 				break;
@@ -264,28 +264,28 @@ static void SPI_msb_first(spi_channel_t channel, spi_lsb_or_msb_t msb){
 				case (SPI_0):
 						if (msb)
 						{
-							SPI0->MCR = SPI_CTAR_LSBFE_MASK;
+							SPI0->CTAR[SPI_CTAR_0] |= (SPI_CTAR_LSBFE_MASK);
 						}
 						else
-							SPI0->MCR = ~SPI_CTAR_LSBFE_MASK;
+							SPI0->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_LSBFE_MASK);
 						break;
 
 				case (SPI_1):
 						if (msb)
 						{
-							SPI1->MCR = SPI_CTAR_LSBFE_MASK;
+							SPI1->CTAR[SPI_CTAR_0] |= SPI_CTAR_LSBFE_MASK;
 						}
 						else
-							SPI1->MCR =~SPI_CTAR_LSBFE_MASK;
+							SPI1->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_LSBFE_MASK);
 						break;
 
 				case (SPI_2):
 						if (msb)
 						{
-							SPI2->MCR = SPI_CTAR_LSBFE_MASK;
+							SPI2->CTAR[SPI_CTAR_0] |= SPI_CTAR_LSBFE_MASK;
 						}
 						else
-							SPI2->MCR = ~SPI_CTAR_LSBFE_MASK;
+							SPI2->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_LSBFE_MASK);
 						break;
 
 				default:
@@ -346,12 +346,26 @@ void SPI_stop_tranference(spi_channel_t channel)
 			}
 }
 /*It transmits the information contained in data*/
-void SPI_send_one_byte(uint8_t Data){
+void SPI_send_one_byte(uint8_t Data)
+{
 	SPI0->PUSHR = Data;
 		while(0 == (SPI0->SR & SPI_SR_TCF_MASK));
 		SPI0->SR |= SPI_SR_TCF_MASK;
 }
 /*It configures the SPI for transmission, this function as arguments receives a pointer to a constant structure where are all
  * the configuration parameters*/
-void SPI_init(const spi_config_t*);
+void SPI_init(const spi_config_t* SPI_Config)
+{
+	SPI_clk(SPI_Config->spi_channel);
+	GPIO_clock_gating(SPI_Config->spi_gpio_port.gpio_port_name);
+	GPIO_pin_control_register(SPI_Config->spi_gpio_port.gpio_port_name, SPI_Config->spi_gpio_port.spi_clk, &(SPI_Config->pin_config));
+	GPIO_pin_control_register(SPI_Config->spi_gpio_port.gpio_port_name, SPI_Config->spi_gpio_port.spi_sout, &(SPI_Config->pin_config));
+	SPI_set_master(SPI_Config->spi_channel, SPI_Config->spi_master);
+	SPI_fifo(SPI_Config->spi_channel, SPI_Config->spi_enable_fifo);
+	SPI_enable(SPI_Config->spi_channel);
+	SPI_clock_polarity(SPI_Config->spi_channel, SPI_Config->spi_polarity);
+	SPI_clock_phase(SPI_Config->spi_channel, SPI_Config->spi_phase);
+	SPI_baud_rate(SPI_Config->spi_channel, SPI_Config->spi_baudrate);
+	SPI_msb_first(SPI_Config->spi_channel,SPI_Config->spi_lsb_or_msb);
 
+}

@@ -17,7 +17,7 @@
  
 #include "SPI.h"
 #include "GPIO.h"
-#include "Bits.h"
+
 #include "LCD_nokia.h"
 #include "LCD_nokia_images.h"
 #include "stdint.h"
@@ -36,7 +36,7 @@ const spi_config_t g_spi_config = {
 							GPIO_MUX2,
 							SPI_BAUD_RATE_2,
 							SPI_FSIZE_8,
-							{GPIO_D, bit_1, bit_2} };
+							{GPIO_D, BIT1, BIT2} };
 
 /*! This array hold the initial picture that is shown in the LCD. Note that extern should be avoided*/
 extern const uint8_t ITESO[504];
