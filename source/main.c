@@ -40,6 +40,7 @@ const spi_config_t g_spi_config = {
 
 /*! This array hold the initial picture that is shown in the LCD. Note that extern should be avoided*/
 extern const uint8_t ITESO[504];
+extern const uint8_t PI[504];
 
 
 int main(void)
@@ -68,6 +69,9 @@ int main(void)
 			LCD_nokia_send_char('1'); /*! It prints a character*/
 			LCD_nokia_send_char('8'); /*! It prints a character*/
 			delay(65000);
+			LCD_nokia_clear();/*! It clears the information printed in the LCD*/
+						LCD_nokia_bitmap(&PI[0]); /*! It prints an array that hold an image, in this case is the initial picture*/
+						delay(65000);
 
 		}
 	

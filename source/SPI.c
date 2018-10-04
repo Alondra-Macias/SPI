@@ -125,6 +125,7 @@ static void SPI_fifo(spi_channel_t channel, spi_enable_fifo_t enableOrDisable){
 					else
 						SPI0->MCR |= SPI_FIFOS_DIS;
 					break;
+					//SPI_MCR_DIS_RFC_MASK //dis
 
 			case (SPI_1):
 					if (enableOrDisable)
@@ -157,10 +158,10 @@ static void SPI_clock_polarity(spi_channel_t channel, spi_polarity_t cpol)
 		case (SPI_0):
 				if (cpol)
 				{
-					SPI0->CTAR[SPI_CTAR_0] |= SPI_CTAR_CPOL_MASK;
+					SPI0->CTAR[SPI_CTAR_0] |= SPI_CTAR_CPOL_MASK; //high
 				}
 				else
-					SPI0->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_CPOL_MASK);
+					SPI0->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_CPOL_MASK); //low
 				break;
 		case (SPI_1):
 				if (cpol)
@@ -186,21 +187,24 @@ static void SPI_clock_polarity(spi_channel_t channel, spi_polarity_t cpol)
 /*It selects the frame size depending on the value of frameSize and the macros that are defined above*/
 static void SPI_frame_size(spi_channel_t channel, uint32_t frameSize)
 {
-	frameSize <<= SPI_CTAR_FMSZ_SHIFT;
-	switch (channel)
-	{
-		case (SPI_0):
+	switch(channel)
+				{
+		case SPI_0:
+			SPI0->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_FMSZ_MASK);
 			SPI0->CTAR[SPI_CTAR_0] |= frameSize;
 			break;
-		case (SPI_1):
+		case SPI_1:
+			SPI1->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_FMSZ_MASK);
 			SPI1->CTAR[SPI_CTAR_0] |= frameSize;
 			break;
-		case (SPI_2):
+		case SPI_2:
+			SPI2->CTAR[SPI_CTAR_0] &= ~(SPI_CTAR_FMSZ_MASK);
 			SPI2->CTAR[SPI_CTAR_0] |= frameSize;
 			break;
 		default:
 			break;
-	}
+				}
+
 }
 /*It selects the clock phase depending on the value of cpha*/
 static void SPI_clock_phase(spi_channel_t channel, spi_phase_t cpha)
@@ -365,7 +369,13 @@ void SPI_init(const spi_config_t* SPI_Config)
 	SPI_enable(SPI_Config->spi_channel);
 	SPI_clock_polarity(SPI_Config->spi_channel, SPI_Config->spi_polarity);
 	SPI_clock_phase(SPI_Config->spi_channel, SPI_Config->spi_phase);
+
+	SPI_frame_size(SPI_Config->spi_channel,SPI_Config->spi_frame_size);
+
+
 	SPI_baud_rate(SPI_Config->spi_channel, SPI_Config->spi_baudrate);
 	SPI_msb_first(SPI_Config->spi_channel,SPI_Config->spi_lsb_or_msb);
+
+
 
 }
